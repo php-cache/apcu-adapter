@@ -31,7 +31,9 @@ class ApcuCachePool extends AbstractCachePool
 
     protected function clearOneObjectFromCache($key)
     {
-        return apcu_delete($key);
+        apcu_delete($key);
+
+        return true;
     }
 
     protected function storeItemInCache($key, CacheItemInterface $item, $ttl)

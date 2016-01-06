@@ -3,8 +3,8 @@
 
 This is a implementation for the PSR-6 for an apcu cache. This implementation supports tags. 
 
-| Feature |   |
-| ------- | - | 
+| Feature | Supported |
+| ------- | --------- | 
 | Flush everything | Yes 
 | Expiration time | Yes
-| Support for tags | Yes
+| Tagging | Yes
