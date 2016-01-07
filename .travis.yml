@@ -9,19 +9,21 @@ sudo: false
 
 matrix:
   fast_finish: true
+  allow_failures:
+    - php: hhvm
 
 before_install:
     - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]]; then phpenv config-rm xdebug.ini; fi;
     - pip install --user codecov
 
 before_script:
-  - mkdir -p ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d
-  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  - pecl config-set preferred_state beta; printf "yes\n" | pecl install apcu
+  # Install apcu
+  - if [ $TRAVIS_PHP_VERSION == '7.0' ]; then export APCU_VERSION=5.1.0; else export APCU_VERSION=4.0.8; fi
+  - if [ $TRAVIS_PHP_VERSION != 'hhvm' ]; then sh -c "yes '' | pecl install apcu-$APCU_VERSION"; fi
+  - if [ $TRAVIS_PHP_VERSION != 'hhvm' ]; then phpenv config-add ./tests/travis/php.ini; fi
+
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction
-  # must be set after composer to avoid issue with autoloading
-  - echo "apc.enable_cli=On" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 script:
     - php -dzend_extension=xdebug.so vendor/bin/phpunit --coverage-clover=coverage.xml
