@@ -11,7 +11,16 @@ cache:
 
 before_install:
     - mkdir -p ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d
-    - ./build/php/7.0/Apcu.sh
+    - |
+        echo "apc.enabled=1
+        apc.enable_cli=1
+        apc.use_request_time=0
+        " > ./apc.ini
+    - phpenv config-add ./apc.ini
+    - yes '' | pecl install apcu
+
+install:
+    - composer update
 
 script:
     - ./vendor/bin/phpunit --coverage-clover=coverage.xml
